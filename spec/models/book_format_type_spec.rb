@@ -5,6 +5,11 @@ RSpec.describe BookFormatType, type: :model do
     it { should validate_presence_of(:name) }
   end
 
+  context "relationships" do
+    it {should have_many(:book_formats) }
+    it { should have_many(:books).through(:book_formats) }
+  end
+
   it "has a valid factory" do
     book_format = FactoryBot.create(:book_format_type)
     expect(book_format).to be_valid
