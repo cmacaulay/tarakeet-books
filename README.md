@@ -31,3 +31,7 @@ With our database schema fully built out, we are now able to start working on th
 + average_rating:  The average (mean) of all the book reviews for this book.  Rounded to one decimal place.
 
 While I haven't mentioned it yet, I have been using TDD throughout this project so far, but I'm going to start relying even more heavily on it here. It is the best way to ensure our methods are returning what we expect! In looking at these instance methods, it is clear that we'll soon know whether or not our relationships have been set up correctly. You may have noticed that in each model test I make sure there's a valid Factory, which is basically dummy data for the testing environment. These factories will be useful in testing the instance methods, as I will easily be able to generate data to test against.
+
+## Iteration 2.5: Refactor!
+
+I have been refactoring my code throughout developing this app, but sometimes it's easy to feel like you're building momentum and breezing through features and when that happens code quality can suffer. A bulk of this application has been built, with (an albeit large!) class method left to meet the spec. This seems like a great place to take the time to go through the code that has already been written, and see if there are areas where we can refactor.
