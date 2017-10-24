@@ -45,4 +45,31 @@ RSpec.describe Book, type: :model do
     expect(book).to be_valid
   end
 
+  describe "#author_name" do
+    it "does not return the first name first" do
+      author = FactoryBot.create(:author,
+                                first_name: "Malcom",
+                                last_name:  "Gladwell")
+      book   = FactoryBot.create(:book,
+                                 title: "Blink",
+                                 author: author)
+      result = book.author_name
+
+      expect(result).to_not eq("Malcom, Gladwell")
+    end
+
+    it "returns the author's name in the correct format" do
+      author = FactoryBot.create(:author,
+                                first_name: "Malcom",
+                                last_name:  "Gladwell")
+      book   = FactoryBot.create(:book,
+                                 title: "Blink",
+                                 author: author)
+      result = book.author_name
+
+      expect(result).to eq("Gladwell, Malcom")
+    end
+
+  end
+
 end
