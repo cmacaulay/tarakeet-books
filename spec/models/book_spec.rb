@@ -9,6 +9,7 @@ RSpec.describe Book, type: :model do
     it { should belong_to(:publisher) }
     it { should belong_to(:author) }
     it { should have_many(:book_reviews) }
+    # it { should have_many(:book_format_types).through(:book_formats) }
   end
 
   it "has a valid factory" do

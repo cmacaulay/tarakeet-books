@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024021552) do
+ActiveRecord::Schema.define(version: 20171024163551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,15 @@ ActiveRecord::Schema.define(version: 20171024021552) do
     t.boolean "physical"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "book_formats", force: :cascade do |t|
+    t.bigint "book_id"
+    t.bigint "book_format_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_format_type_id"], name: "index_book_formats_on_book_format_type_id"
+    t.index ["book_id"], name: "index_book_formats_on_book_id"
   end
 
   create_table "book_reviews", force: :cascade do |t|
@@ -53,6 +62,8 @@ ActiveRecord::Schema.define(version: 20171024021552) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "book_formats", "book_format_types"
+  add_foreign_key "book_formats", "books"
   add_foreign_key "book_reviews", "books"
   add_foreign_key "books", "authors"
   add_foreign_key "books", "publishers"
