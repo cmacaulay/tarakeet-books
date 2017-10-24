@@ -93,6 +93,16 @@ RSpec.describe Book, type: :model do
     end
   end
 
-  
+  describe "#average_rating" do
+    it "returns the mean average of all reviews for a single book" do
+      book = create(:book)
+      create_list(:book_review, 3, book: book, rating: 2)
+      create_list(:book_review, 4, book: book, rating: 5)
 
+      result = book.average_rating
+
+      expect(book.book_reviews.count).to eq(7)
+      expect(result).to eq(3.7)
+    end
+  end
 end
