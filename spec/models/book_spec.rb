@@ -9,7 +9,8 @@ RSpec.describe Book, type: :model do
     it { should belong_to(:publisher) }
     it { should belong_to(:author) }
     it { should have_many(:book_reviews) }
-    # it { should have_many(:book_format_types).through(:book_formats) }
+    it {should have_many(:book_formats) }
+    it { should have_many(:book_format_types).through(:book_formats) }
   end
 
   it "has a valid factory" do
@@ -69,7 +70,29 @@ RSpec.describe Book, type: :model do
 
       expect(result).to eq("Gladwell, Malcom")
     end
-
   end
+
+  describe "#book_format_types" do
+    it "returns a collection of BookFormatTypes for single book" do
+      book  = create(:book)
+      create(:book_format,
+             book: book,
+             book_format_type: create(:book_format_type,
+                                      name: "Hardcover",
+                                      physical: true))
+      create(:book_format,
+             book: book,
+             book_format_type: create(:book_format_type,
+                                      name: "PDF"))
+
+      result = book.book_format_types
+
+      expect(result.count).to eq(2)
+      expect(result.first.name).to eq("Hardcover")
+      expect(result.last.name).to eq("PDF")
+    end
+  end
+
+  
 
 end
