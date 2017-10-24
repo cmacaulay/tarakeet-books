@@ -15,4 +15,8 @@ class Book < ApplicationRecord
   def average_rating
     (book_reviews.pluck(:rating).inject(:+).to_f / book_reviews.count).round(1)
   end
+
+  def self.search(query, options)
+    
+  end
 end

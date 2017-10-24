@@ -35,3 +35,27 @@ While I haven't mentioned it yet, I have been using TDD throughout this project 
 ## Iteration 2.5: Refactor!
 
 I have been refactoring my code throughout developing this app, but sometimes it's easy to feel like you're building momentum and breezing through features and when that happens code quality can suffer. A bulk of this application has been built, with (an albeit large!) class method left to meet the spec. This seems like a great place to take the time to go through the code that has already been written, and see if there are areas where we can refactor.
+
+## Iteration 3: Implementing the search query class method on Book
+
+This final piece of the application will likely take the longest, and can definitely been broken down into smaller chunks. The spec is asking for a class method on Book that returns a collection of books defined by the query, and options. The following rules will apply:
+
+1. If the last name of the author matches the query string exactly (case insensitive)
+2. If the name of the publisher matches the query string exactly (case insensitive)
+3. If any portion of the book’s title matches the query string (case insensitive)
+4. The results should be ordered by average rating, with the highest rating first.  
+5. The list should be unique (the same book shouldn't appear multiple times in the results).
+
+The search options are as follows, and you should be able to query with multiple search options:
+
++ :title_only (defaults to false).  If true, only return results from rule #3 above.  
++ :book_format_type_id (defaults to nil).  If true, only return books that are available in a format that matches the supplied type id.  
++ :book_format_physical (defaults to nil).   If supplied as true or false, only return books that are available in a format whose “physical” field matches the supplied argument.  This filter is not applied if the argument is not present or nil.  
+
+When it comes to bigger problems like this, I like to break it down into smaller more accessible chunks. I can identify a few of these already:
+* Sort a collection of books by their ratings from highest to lowest
+* If nil is passed through as both arguments, it should return a all books, ordered by average ratings
+* Setting the default options
+* Ensuring only unique records are returned
+
+When it comes to the query, I like to think of it as what might be typed into a search bar on a website - we are looking to try and match records as closely to what's in the query as possible. The options are what helps us scope down the results, and make what is returned more specific. Knowing that, it is clear that first we will have to find all results that meet the query, and then narrow it down based off the options entered.
