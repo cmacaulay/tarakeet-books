@@ -13,10 +13,17 @@ class Book < ApplicationRecord
   end
 
   def average_rating
-    (book_reviews.pluck(:rating).inject(:+).to_f / book_reviews.count).round(1)
+    (book_reviews.sum(:rating).to_f / book_reviews.count).round(1)
+  end
+
+  def books_by_rating
+
   end
 
   def self.search(query, options)
-    
+    self.joins(:book_reviews)
+    .group('books.id')
+    .order('AVG(book_reviews.rating) DESC')
   end
+
 end

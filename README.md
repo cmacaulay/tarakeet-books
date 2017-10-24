@@ -57,5 +57,6 @@ When it comes to bigger problems like this, I like to break it down into smaller
 * If nil is passed through as both arguments, it should return a all books, ordered by average ratings
 * Setting the default options
 * Ensuring only unique records are returned
+* Only titles are returned
 
 When it comes to the query, I like to think of it as what might be typed into a search bar on a website - we are looking to try and match records as closely to what's in the query as possible. The options are what helps us scope down the results, and make what is returned more specific. Knowing that, it is clear that first we will have to find all results that meet the query, and then narrow it down based off the options entered.

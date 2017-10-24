@@ -110,4 +110,19 @@ RSpec.describe Book, type: :model do
       expect(result).to eq(3.7)
     end
   end
+
+  describe "#self.search" do
+    it "returns all books in order when there's no query" do
+      pub_id = create(:publisher).id
+      book1  = create(:book, publisher_id: pub_id)
+      book2  = create(:book, title: "Lolita", publisher_id: pub_id)
+      create_list(:book_review, 2, book: book1, rating: 5)
+      create_list(:book_review, 4, book: book2, rating: 3)
+
+      result = Book.search(nil, nil)
+
+      expect(result.first).to eq(book1)
+      expect(result.last).to eq(book2)
+    end
+  end
 end
