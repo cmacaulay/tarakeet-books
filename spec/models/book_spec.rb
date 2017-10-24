@@ -15,11 +15,13 @@ RSpec.describe Book, type: :model do
 
   it "has a valid factory" do
     book = FactoryBot.create(:book)
+
     expect(book).to be_valid
   end
 
   it "is not valid without a title" do
     book = Book.new(title: "Born A Crime")
+
     expect(book).to_not be_valid
   end
 
@@ -43,6 +45,7 @@ RSpec.describe Book, type: :model do
     book = Book.new(title: "Born A Crime",
                     publisher_id: pub_id,
                     author_id: auth_id)
+
     expect(book).to be_valid
   end
 
@@ -54,6 +57,7 @@ RSpec.describe Book, type: :model do
       book   = FactoryBot.create(:book,
                                  title: "Blink",
                                  author: author)
+
       result = book.author_name
 
       expect(result).to_not eq("Malcom, Gladwell")
@@ -66,6 +70,7 @@ RSpec.describe Book, type: :model do
       book   = FactoryBot.create(:book,
                                  title: "Blink",
                                  author: author)
+
       result = book.author_name
 
       expect(result).to eq("Gladwell, Malcom")
