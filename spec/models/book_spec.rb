@@ -124,5 +124,53 @@ RSpec.describe Book, type: :model do
       expect(result.first).to eq(book1)
       expect(result.last).to eq(book2)
     end
+
+    it "returns all book titles when no query is given with :title_only option " do
+      pub_id = create(:publisher).id
+      book1  = create(:book, publisher_id: pub_id)
+      book2  = create(:book, title: "Lolita", publisher_id: pub_id)
+      create_list(:book_review, 2, book: book1, rating: 3)
+      create_list(:book_review, 4, book: book2, rating: 5)
+
+      result = Book.search(nil, title_only: true)
+
+      expect(result.class).to eq(Array)
+      expect(result.count).to eq(2)
+      expect(result).to eq(["#{book2.title}", "#{book1.title}"])
+    end
+
+    it "returns only books available in format when :book_format_type_id is given" do
+      create(:book_format_type, id: 1, name: "Hardcover", physical: true)
+      create(:book_format_type, id: 2, name: "Kindle Book", physical: false)
+
+      book = create(:book, title: "Blink")
+      create(:book_review, book: book, rating: 5)
+      create(:book_format, book_format_type_id: 2, book: book)
+
+      6.times do
+        create(:book_format, book_format_type_id: 2, book: create(:book_with_book_reviews))
+      end
+      5.times do
+        create(:book_format, book_format_type_id: 1, book: create(:book_with_book_reviews))
+      end
+
+      result = Book.search(nil, book_format_type_id: 2)
+
+      expect(result.length).to eq(7)
+      expect(result.first.title).to eq(book.title)
+    end
+
+    it "returns all book records with physical formats when :book_format_physical is given" do
+      physical = create(:book_format_type, name: "Paperback", physical: true)
+      digital  = create(:book_format_type, name: "E-Book", physical: false)
+
+      3.times { create(:book_format, book_format_type: physical, book: create(:book_with_book_reviews)) }
+      5.times { create(:book_format, book_format_type: digital, book: create(:book_with_book_reviews)) }
+
+      result = Book.search(nil, book_format_physical: true)
+
+      expect(result.length).to eq(3)
+    end
+
   end
 end
