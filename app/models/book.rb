@@ -8,15 +8,18 @@ class Book < ApplicationRecord
   belongs_to :publisher
   belongs_to :author
 
-  scope :book_format_type, -> (book_format_type_id) { joins(:book_format_types, :book_reviews)
+  scope :book_format_type, -> (book_format_type_id) { select('DISTINCT books.*, AVG(book_reviews.rating)')
+                                                      .joins(:book_format_types, :book_reviews)
                                                       .merge(BookFormatType.format(book_format_type_id))
                                                       .group('books.id')
                                                       .order('AVG(book_reviews.rating) DESC') }
 
-  scope :book_format_physical, -> { joins(:book_format_types, :book_reviews)
+  scope :book_format_physical, -> { select('DISTINCT books.*, AVG(book_reviews.rating)')
+                                    .joins(:book_format_types, :book_reviews)
                                     .merge(BookFormatType.physical)
                                     .group('books.id')
-                                    .order('AVG(book_reviews.rating) DESC')}
+                                    .order('AVG(book_reviews.rating) DESC')
+                                    }
 
   def author_name
     author.format_name
