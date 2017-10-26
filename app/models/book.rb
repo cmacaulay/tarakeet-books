@@ -8,19 +8,6 @@ class Book < ApplicationRecord
   belongs_to :publisher
   belongs_to :author
 
-  scope :book_format_type, -> (book_format_type_id) { select('DISTINCT books.*, AVG(book_reviews.rating)')
-                                                      .joins(:book_format_types, :book_reviews)
-                                                      .merge(BookFormatType.format(book_format_type_id))
-                                                      .group('books.id')
-                                                      .order('AVG(book_reviews.rating) DESC') }
-
-  scope :book_format_physical, -> { select('DISTINCT books.*, AVG(book_reviews.rating)')
-                                    .joins(:book_format_types, :book_reviews)
-                                    .merge(BookFormatType.physical)
-                                    .group('books.id')
-                                    .order('AVG(book_reviews.rating) DESC')
-                                    }
-
   def author_name
     author.format_name
   end
@@ -37,11 +24,11 @@ class Book < ApplicationRecord
       end
     elsif options[:book_format_type_id]
       if !query
-        books = self.book_format_type(options[:book_format_type_id])
+        self.book_format_type(options[:book_format_type_id])
       end
     elsif options[:book_format_physical] == true
       if !query
-        books = self.book_format_physical
+        self.book_format_physical
       end
     end
   end
@@ -50,6 +37,22 @@ class Book < ApplicationRecord
 
   def self.books_by_rating
     self.joins(:book_reviews)
+    .group('books.id')
+    .order('AVG(book_reviews.rating) DESC')
+  end
+
+  def self.book_format_type(id)
+    select('DISTINCT books.title, AVG(book_reviews.rating)')
+    .joins(:book_format_types, :book_reviews)
+    .merge(BookFormatType.format(id))
+    .group('books.id')
+    .order('AVG(book_reviews.rating) DESC')
+  end
+
+  def self.book_format_physical
+    select('DISTINCT books.title, AVG(book_reviews.rating)')
+    .joins(:book_format_types, :book_reviews)
+    .merge(BookFormatType.physical)
     .group('books.id')
     .order('AVG(book_reviews.rating) DESC')
   end
