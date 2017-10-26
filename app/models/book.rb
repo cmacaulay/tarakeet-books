@@ -8,6 +8,8 @@ class Book < ApplicationRecord
   belongs_to :publisher
   belongs_to :author
 
+  scope :title_only, -> { pluck(:title) }
+
   def author_name
     author.format_name
   end
@@ -19,17 +21,12 @@ class Book < ApplicationRecord
   def self.search(query, options)
     return books_by_rating if !query && !options
     if options[:title_only]
-      if !query
-        books_by_rating.pluck(:title)
-      end
+      # !query ? books_by_rating.title_only : something that queries the db
+      books_by_rating.title_only if !query
     elsif options[:book_format_type_id]
-      if !query
-        self.book_format_type(options[:book_format_type_id])
-      end
+      book_format_type(options[:book_format_type_id]) if !query
     elsif options[:book_format_physical] == true
-      if !query
-        self.book_format_physical
-      end
+      book_format_physical if !query
     end
   end
 
