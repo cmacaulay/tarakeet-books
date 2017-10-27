@@ -32,26 +32,25 @@ class Book < ApplicationRecord
     end
   end
 
+  private
   def self.single_option_search_filter(query, options)
     if options[:title_only]
       query_lookup(query).title_only
     elsif options[:book_format_type_id]
       query_lookup(query).book_format_type(options[:book_format_type_id])
     else
-      query_lookup(query).book_format_physical
+      query_lookup(query).book_format_physical(options[:book_format_physical])
     end
   end
 
   def self.two_options_search_filter(query, options)
     if !options[:book_format_type_id]
-      query_lookup(query).book_format_physical.title_only
+      query_lookup(query).book_format_physical(options[:book_format_physical]).title_only
     elsif !options[:book_format_physical]
       id = options[:book_format_type_id]
       query_lookup(query).book_format_type(id).title_only
     end
   end
-
-  private
   def self.query_lookup(query)
     search_by_title(query).length > 0 ? search_by_title(query) : search_by_author_name(query)
   end
@@ -77,10 +76,10 @@ class Book < ApplicationRecord
     .by_rating
   end
 
-  def self.book_format_physical
+  def self.book_format_physical(boolean)
     distinct_books
     .joins(:book_format_types, :book_reviews)
-    .merge(BookFormatType.physical)
+    .merge(BookFormatType.physical(boolean))
     .by_rating
   end
 
