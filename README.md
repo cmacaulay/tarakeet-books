@@ -60,7 +60,7 @@ I really enjoyed this code challenge! Any new project should teach you a few thi
 
 ## Resources referenced:
 
-* (Active Record Docs)[http://guides.rubyonrails.org/active_record_querying.html#ids]
-* Stack Overflow Questions (like this one)[https://stackoverflow.com/questions/29380941/ordering-data-from-table-by-average-rating-and-number-of-reviews-including-objec]
-* (Blog Post on Scopes)[https://www.justinweiss.com/articles/search-and-filter-rails-models-without-bloating-your-controller/]
-* (Factory Bot Docs)[https://github.com/thoughtbot/factory_bot_rails]
+* [Active Record Docs](http://guides.rubyonrails.org/active_record_querying.html#ids)
+* Stack Overflow Questions [like this one](https://stackoverflow.com/questions/29380941/ordering-data-from-table-by-average-rating-and-number-of-reviews-including-objec)
+* [Blog Post on Scopes](https://www.justinweiss.com/articles/search-and-filter-rails-models-without-bloating-your-controller/)
+* [Factory Bot Docs](https://github.com/thoughtbot/factory_bot_rails)
