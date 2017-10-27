@@ -1,62 +1,66 @@
-# Tarakeet Rails Challenge
+# Terakeet Books
 
-This Rails application is a database for fictional online book-store, implemented as a take-home challenge by Casey Macaulay.
+This Rails project was built by Casey Macaulay as a take-home coding assignment from Terakeet. This application provides a PSQL database for a fictional online bookstore.
 
-## Iteration 0: Book, Publisher & Author Model Set-up
+## Getting Started
 
-This challenge asks for a Book model to be created with its corresponding migrations. In looking at the three required fields for Book - title, publisher_id, and author_id - it is clear that all three models are required to correctly build out the relationships. My first step was to design this basic schema (I like to use [this](http://ondras.zarovi.cz/sql/demo/) tool.):
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+App setup:
+```
+git clone git@github.com:cmacaulay/terakeet-books.git
+cd terakeet-books
+bundle install
+```
+To create your local database:
+```
+rails db:create
+rails db:migrate
+```
+
+## Running the tests
+
+This application is tested using RSpec. To run the full test suite from your terminal, run the command:
+
+```
+rspec
+```
+## How did I approach this challenge?
+
+To gain more in-depth insight of my thought process in working through this challenge, please see my [planning thoughts](PLANNING_THOUGHTS.md), which I typed out as I worked through different iterations of the project.
+
+### Iteration 0: Book, Publisher & Author Model Set-up
+
+The specs asked to build out a Book model. First, I determined what the minimum schema design would have to be in order to successfully set up the relationships defined in the books table.
+
 ![alt text](./public/images/author-publisher-book-schema.png "Schema: Iteration 0")
 
-Now that I know what schema is necessary to build out my Book model, I'm able to start my Rails application and create the necessary migrations. Once [my schema reflects the ERD](https://github.com/cmacaulay/tarakeet-books/pulls?q=is%3Apr+is%3Aclosed), I'm able to move on and finish building out the models required to complete the application.
+### Iteration 1: Finish the schema
 
-## Iteration 1: Completing the Schema with BookFormatType, BookFormat & BookReview
+With the relationships built for a successful books table, next I had to make sure the schema met the demands of the required instance methods. I realized we would need to add BookFormatType, BookFormat and BookReview models to our app, in order to create the instance methods.
 
-In looking at the instance methods required to complete my Book model, it is clear that this database is not yet complete. We'll take a look at the required class methods a little later on.
-
-+ book_format_types: will require BookFormatType and BookFormat models to exist.
-+ author_name: we can use the existing Author model to implement.
-+ average_rating: requires we have a BookReview table as well.
-
-As a visual person, it's important that when I add tables to a database, I see how what the final product might look like first - back to the Schema designer!
 ![alt text](./public/images/final-schema.png "Final Schema")
 
-Now that I know what the final database should be set up like, it's back to Rails and time to start creating migrations to generate the new tables, and build out the new models.
+### Iteration 2: Book Instance methods
 
-## Iteration 2: Instance Methods of Book
+With the schema finalized, it was then time for Book's instance methods. While I had used TDD to model-test before this iteration, I relied on it to really guide my development process starting with this iteration, to ensure the methods were returning what was expected.
 
-With our database schema fully built out, we are now able to start working on the required instance methods of book:
+### Iteration 3: Book Class method
 
-+ book_format_types:  Returns a collection of the BookFormatTypes this book is available in
-+ author_name:  The name of the author of this book in “lastname, firstname” format
-+ average_rating:  The average (mean) of all the book reviews for this book.  Rounded to one decimal place.
+This was the most challenging piece of the application, and I really enjoyed thinking through how to best query the database and organize how the search query and options were processed. At first, I didn't know where to begin. Then, I realized that there were smaller chunks of the puzzle I could address in isolation - each query rule, or each option for instance - and so I started my testing each of these pieces separately, which really came in handy when I was piecing it all together. Each of the query rules or the search options is applying their own rules to the database, and thinking of how they could work together modularly ended up being very helpful.
 
-While I haven't mentioned it yet, I have been using TDD throughout this project so far, but I'm going to start relying even more heavily on it here. It is the best way to ensure our methods are returning what we expect! In looking at these instance methods, it is clear that we'll soon know whether or not our relationships have been set up correctly. You may have noticed that in each model test I make sure there's a valid Factory, which is basically dummy data for the testing environment. These factories will be useful in testing the instance methods, as I will easily be able to generate data to test against.
+## What did I learn?
 
-## Iteration 2.5: Refactor!
+I really enjoyed this code challenge! Any new project should teach you a few things, here are some of the road bumps and lessons learned I had from this project:
+* Never trust that your code environment is going to work, even if it worked yesterday!
+** In starting the project, I ran into some versioning issues for both Rails and Ruby - always a good way to start!
+* A gem you've always used may suddenly have a new name!
+** Right before starting, FactoryGirl was changed to FactoryBot. This was confusing during set-up! Once I figured it out, I realized it's always a good idea to start with the docs, even if you've used sometime numerous times before.
+* Testing is still one of my favorite ways to breakdown a problem.
 
-I have been refactoring my code throughout developing this app, but sometimes it's easy to feel like you're building momentum and breezing through features and when that happens code quality can suffer. A bulk of this application has been built, with (an albeit large!) class method left to meet the spec. This seems like a great place to take the time to go through the code that has already been written, and see if there are areas where we can refactor.
+## Resources referenced:
 
-## Iteration 3: Implementing the search query class method on Book
-
-This final piece of the application will likely take the longest, and can definitely been broken down into smaller chunks. The spec is asking for a class method on Book that returns a collection of books defined by the query, and options. The following rules will apply:
-
-1. If the last name of the author matches the query string exactly (case insensitive)
-2. If the name of the publisher matches the query string exactly (case insensitive)
-3. If any portion of the book’s title matches the query string (case insensitive)
-4. The results should be ordered by average rating, with the highest rating first.  
-5. The list should be unique (the same book shouldn't appear multiple times in the results).
-
-The search options are as follows, and you should be able to query with multiple search options:
-
-+ :title_only (defaults to false).  If true, only return results from rule #3 above.  
-+ :book_format_type_id (defaults to nil).  If true, only return books that are available in a format that matches the supplied type id.  
-+ :book_format_physical (defaults to nil).   If supplied as true or false, only return books that are available in a format whose “physical” field matches the supplied argument.  This filter is not applied if the argument is not present or nil.  
-
-When it comes to bigger problems like this, I like to break it down into smaller more accessible chunks. I can identify a few of these already:
-* Sort a collection of books by their ratings from highest to lowest
-* If nil is passed through as both arguments, it should return a all books, ordered by average ratings
-* Setting the default options
-* Ensuring only unique records are returned
-* Only titles are returned
-
-When it comes to the query, I like to think of it as what might be typed into a search bar on a website - we are looking to try and match records as closely to what's in the query as possible. The options are what helps us scope down the results, and make what is returned more specific. Knowing that, it is clear that first we will have to find all results that meet the query, and then narrow it down based off the options entered.
+* (Active Record Docs)[http://guides.rubyonrails.org/active_record_querying.html#ids]
+* Stack Overflow Questions (like this one)[https://stackoverflow.com/questions/29380941/ordering-data-from-table-by-average-rating-and-number-of-reviews-including-objec]
+* (Blog Post on Scopes)[https://www.justinweiss.com/articles/search-and-filter-rails-models-without-bloating-your-controller/]
+* (Factory Bot Docs)[https://github.com/thoughtbot/factory_bot_rails]
