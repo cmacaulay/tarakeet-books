@@ -115,6 +115,13 @@ require 'rails_helper'
         expect(result.first).to eq(best_book.title)
       end
 
-      # what happens if you search for something that does not exist?
-      
+      it "returns no results when query matches no recods" do
+        create_list(:book_with_book_reviews, 3)
+
+        result = Book.search("Exile", nil)
+
+        expect(result.length).to eq(0)
+        expect(result.first).to eq(nil)
+      end
+
     end

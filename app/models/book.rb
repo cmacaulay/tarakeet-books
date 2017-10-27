@@ -32,6 +32,7 @@ class Book < ApplicationRecord
     end
   end
 
+  private
   def self.single_option_search_filter(query, options)
     if options[:title_only]
       query_lookup(query).title_only
@@ -50,8 +51,6 @@ class Book < ApplicationRecord
       query_lookup(query).book_format_type(id).title_only
     end
   end
-
-  private
   def self.query_lookup(query)
     search_by_title(query).length > 0 ? search_by_title(query) : search_by_author_name(query)
   end
