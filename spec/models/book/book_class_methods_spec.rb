@@ -89,13 +89,13 @@ require 'rails_helper'
       end
 
       it "allows you to query and appy both the :title_only and :book_format_physical options" do
-        physical_id = create(:book_format_type, name: "Paperback", physical: true).id
+        digital_id = create(:book_format_type, name: "Interactive", physical: false).id
         best_book   = create(:book, title: "To Kill A Mockingbird")
-        create(:book_format, book_format_type_id: physical_id, book: best_book)
+        create(:book_format, book_format_type_id: digital_id, book: best_book)
         create(:book_review, book: best_book, rating: 5)
-        8.times { create(:book_format, book_format_type_id: physical_id, book: create(:book_with_book_reviews)) }
+        8.times { create(:book_format, book_format_type_id: digital_id, book: create(:book_with_book_reviews)) }
 
-        result = Book.search("Mockingbird", title_only: true, book_format_physical: true)
+        result = Book.search("Mockingbird", title_only: true, book_format_physical: false)
 
         expect(result.length).to eq(1)
         expect(result.class).to eq(Array)
