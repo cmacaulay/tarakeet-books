@@ -15,7 +15,6 @@ require 'rails_helper'
     end
 
     context "search options" do
-
       it "returns all book titles when no query is given with :title_only option " do
         pub_id = create(:publisher).id
         book1  = create(:book, publisher_id: pub_id)
@@ -87,6 +86,20 @@ require 'rails_helper'
     end
 
     context "search query" do
+      it "returns results of case insensitive queries when no options are given" do
+        author = create(:author, first_name: "J.K", last_name: "Rowling")
+        best_book = create(:book, author: author, title: "Fantastic Beasts & Where to Find Them")
+        create(:book_review, rating: 5, book: best_book)
+        create_list(:book_with_book_reviews, 7, author: author)
 
+        query_first = Book.search("j.k", nil)
+        query_last  = Book.search("ROWLING", nil)
+        query_title = Book.search("Fantastic", nil)
+
+        expect(query_first.length).to eq(8)
+        expect(query_last.length).to eq(8)
+        expect(query_title.length).to eq(1)
+        expect(query_last.first).to eq(query_first.first)
+      end
     end
   end

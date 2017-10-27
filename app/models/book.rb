@@ -20,14 +20,18 @@ class Book < ApplicationRecord
 
   def self.search(query, options)
     return books_by_rating if !query && !options
-    if options.length == 2
-      if !options[:book_format_type_id]
-        book_format_physical.title_only if !query
-      elsif !options[:book_format_physical]
-        id = options[:book_format_type_id]
-        book_format_type(id).title_only if !query
-      end
-    elsif options[:title_only]
+
+    if !options
+      query_search_no_options(query)
+    elsif options.length == 2
+      two_options_search_filter(query, options)
+    else
+      single_option_search_filter(query, options)
+    end
+  end
+
+  def self.single_option_search_filter(query, options)
+    if options[:title_only]
       # !query ? books_by_rating.title_only : something that queries the db
       books_by_rating.title_only if !query
     elsif options[:book_format_type_id]
@@ -37,16 +41,37 @@ class Book < ApplicationRecord
     end
   end
 
+  def self.two_options_search_filter(query, options)
+    if !options[:book_format_type_id]
+      book_format_physical.title_only if !query
+    elsif !options[:book_format_physical]
+      id = options[:book_format_type_id]
+      book_format_type(id).title_only if !query
+    end
+  end
+
   private
+  def self.query_search_no_options(query)
+    search_by_title(query).length > 0 ? search_by_title(query) : search_by_author_name(query)
+  end
+
+  def self.search_by_title(query)
+    books_by_rating.where("title LIKE ? ", "%#{query}%")
+  end
+
+  def self.search_by_author_name(query)
+    books_by_rating.joins(:author).where("authors.first_name = ? OR authors.last_name = ?" , query, query)
+  end
 
   def self.books_by_rating
-    self.joins(:book_reviews)
+    select('DISTINCT books.*, AVG(book_reviews.rating)')
+    .joins(:book_reviews)
     .group('books.id')
     .order('AVG(book_reviews.rating) DESC')
   end
 
   def self.book_format_type(id)
-    select('DISTINCT books.title, AVG(book_reviews.rating)')
+    select('DISTINCT books.*, AVG(book_reviews.rating)')
     .joins(:book_format_types, :book_reviews)
     .merge(BookFormatType.format(id))
     .group('books.id')
@@ -54,7 +79,7 @@ class Book < ApplicationRecord
   end
 
   def self.book_format_physical
-    select('DISTINCT books.title, AVG(book_reviews.rating)')
+    select('DISTINCT books.*, AVG(book_reviews.rating)')
     .joins(:book_format_types, :book_reviews)
     .merge(BookFormatType.physical)
     .group('books.id')
