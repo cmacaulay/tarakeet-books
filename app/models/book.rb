@@ -22,7 +22,7 @@ class Book < ApplicationRecord
     return books_by_rating if !query && !options
 
     if !options
-      query_search_no_options(query)
+      query_lookup(query)
     elsif options.length == 2
       two_options_search_filter(query, options)
     else
@@ -32,12 +32,12 @@ class Book < ApplicationRecord
 
   def self.single_option_search_filter(query, options)
     if options[:title_only]
-      # !query ? books_by_rating.title_only : something that queries the db
-      books_by_rating.title_only if !query
+      !query ? books_by_rating.title_only : query_lookup(query).title_only
     elsif options[:book_format_type_id]
-      book_format_type(options[:book_format_type_id]) if !query
+      id = options[:book_format_type_id]
+      !query ? book_format_type(id) : query_lookup(query).book_format_type(id)
     elsif options[:book_format_physical] == true
-      book_format_physical if !query
+      !query ? book_format_physical : query_lookup(query).book_format_physical
     end
   end
 
@@ -51,7 +51,7 @@ class Book < ApplicationRecord
   end
 
   private
-  def self.query_search_no_options(query)
+  def self.query_lookup(query)
     search_by_title(query).length > 0 ? search_by_title(query) : search_by_author_name(query)
   end
 

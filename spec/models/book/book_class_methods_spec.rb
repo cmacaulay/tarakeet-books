@@ -101,5 +101,32 @@ require 'rails_helper'
         expect(query_title.length).to eq(1)
         expect(query_last.first).to eq(query_first.first)
       end
+
+      it "allows you to search using a query and the :title_only option" do
+        author    = create(:author, first_name: "Ralph", last_name: "Ellison")
+        best_book = create(:book, author: author, title: "Invisible Man")
+        create(:book_review, book: best_book, rating: 5)
+        create_list(:book_with_book_reviews, 4, author: author)
+        create_list(:book_with_book_reviews, 3)
+
+        result      = Book.search("ralph", title_only: true)
+        best_result = Book.search("Man", title_only: true)
+
+        expect(result.length).to eq(5)
+        expect(result.class).to eq(Array)
+        expect(result.first).to eq(best_book.title)
+
+        expect(best_result.length).to eq(1)
+        expect(best_result.first).to eq(best_book.title)
+      end
+
+      it "allows you to query and apply the :book_format_physical option" do
+
+      end
+
+      # it "allows you to query and apply the :book_format_type_id option"
+      # it "allows you to query and both :title_only and :book_format_physical" do
+      # it "allows you to query and both :title_only and :book_format_type_id" do
+
     end
   end
