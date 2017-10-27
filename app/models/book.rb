@@ -20,7 +20,14 @@ class Book < ApplicationRecord
 
   def self.search(query, options)
     return books_by_rating if !query && !options
-    if options[:title_only]
+    if options.length == 2
+      if !options[:book_format_type_id]
+        book_format_physical.title_only if !query
+      elsif !options[:book_format_physical]
+        id = options[:book_format_type_id]
+        book_format_type(id).title_only if !query
+      end
+    elsif options[:title_only]
       # !query ? books_by_rating.title_only : something that queries the db
       books_by_rating.title_only if !query
     elsif options[:book_format_type_id]

@@ -36,12 +36,8 @@ require 'rails_helper'
       create(:book_review, book: book, rating: 5)
       create(:book_format, book_format_type_id: 2, book: book)
 
-      6.times do
-        create(:book_format, book_format_type_id: 2, book: create(:book_with_book_reviews))
-      end
-      5.times do
-        create(:book_format, book_format_type_id: 1, book: create(:book_with_book_reviews))
-      end
+      6.times { create(:book_format, book_format_type_id: 2, book: create(:book_with_book_reviews)) }
+      5.times { create(:book_format, book_format_type_id: 1, book: create(:book_with_book_reviews)) }
 
       result = Book.search(nil, book_format_type_id: 2)
 
@@ -60,5 +56,32 @@ require 'rails_helper'
 
       expect(result.length).to eq(3)
     end
+
+    it "accepts both :title_only and book_format_physical as options" do
+      physical_id = create(:book_format_type, name: "Paperback", physical: true).id
+      best_book   = create(:book, title: "To Kill A Mockingbird")
+      create(:book_format, book_format_type_id: physical_id, book: best_book)
+      create(:book_review, book: best_book, rating: 5)
+      8.times { create(:book_format, book_format_type_id: physical_id, book: create(:book_with_book_reviews)) }
+
+      result = Book.search(nil, title_only: true, book_format_physical: true)
+
+      expect(result.length).to eq(9)
+      expect(result.first).to eq(best_book.title)
+    end
+
+    it "accepts both :title_only and book_format_type_id as options" do
+      physical_id = create(:book_format_type, name: "Paperback", physical: true).id
+      best_book   = create(:book, title: "Catch 22")
+      create(:book_format, book_format_type_id: physical_id, book: best_book)
+      create(:book_review, book: best_book, rating: 5)
+      5.times { create(:book_format, book_format_type_id: physical_id, book: create(:book_with_book_reviews)) }
+
+      result = Book.search(nil, title_only: true, book_format_type_id: physical_id)
+
+      expect(result.length).to eq(6)
+      expect(result.first).to eq(best_book.title)
+    end
+
 
   end
