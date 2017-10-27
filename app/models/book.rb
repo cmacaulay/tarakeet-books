@@ -8,7 +8,9 @@ class Book < ApplicationRecord
   belongs_to :publisher
   belongs_to :author
 
-  scope :title_only, -> { pluck(:title) }
+  scope :title_only,     -> { pluck(:title) }
+  scope :distinct_books, -> { select('DISTINCT books.*, AVG(book_reviews.rating)') }
+  scope :by_rating,      -> { group('books.id').order('AVG(book_reviews.rating) DESC') }
 
   def author_name
     author.format_name
@@ -63,26 +65,23 @@ class Book < ApplicationRecord
   end
 
   def self.books_by_rating
-    select('DISTINCT books.*, AVG(book_reviews.rating)')
+    distinct_books
     .joins(:book_reviews)
-    .group('books.id')
-    .order('AVG(book_reviews.rating) DESC')
+    .by_rating
   end
 
   def self.book_format_type(id)
-    select('DISTINCT books.*, AVG(book_reviews.rating)')
+    distinct_books
     .joins(:book_format_types, :book_reviews)
     .merge(BookFormatType.format(id))
-    .group('books.id')
-    .order('AVG(book_reviews.rating) DESC')
+    .by_rating
   end
 
   def self.book_format_physical
-    select('DISTINCT books.*, AVG(book_reviews.rating)')
+    distinct_books
     .joins(:book_format_types, :book_reviews)
     .merge(BookFormatType.physical)
-    .group('books.id')
-    .order('AVG(book_reviews.rating) DESC')
+    .by_rating
   end
 
 end

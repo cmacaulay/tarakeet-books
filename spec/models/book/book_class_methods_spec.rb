@@ -114,4 +114,7 @@ require 'rails_helper'
         expect(result.length).to eq(1)
         expect(result.first).to eq(best_book.title)
       end
+
+      # what happens if you search for something that does not exist?
+      
     end
