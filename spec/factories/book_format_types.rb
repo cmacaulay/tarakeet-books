@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :book_format_type do
-    name "E-Book"
+    sequence(:name) { |n| "Book Type #{n}" }
     physical false
   end
 end
