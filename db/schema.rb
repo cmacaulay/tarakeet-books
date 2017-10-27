@@ -10,14 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024163551) do
+ActiveRecord::Schema.define(version: 20171027005147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "citext"
 
   create_table "authors", force: :cascade do |t|
-    t.string "first_name"
-    t.string "last_name"
+    t.citext "first_name"
+    t.citext "last_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -47,7 +48,7 @@ ActiveRecord::Schema.define(version: 20171024163551) do
   end
 
   create_table "books", force: :cascade do |t|
-    t.string "title"
+    t.citext "title"
     t.bigint "publisher_id"
     t.bigint "author_id"
     t.datetime "created_at", null: false
